@@ -274,6 +274,10 @@ def nnUNetv2_predict(dir_in, dir_out, task_id, model="3d_fullres", folds=None,
             verbose_preprocessing=verbose,
             allow_tqdm=allow_tqdm
         )
+    if task_id == 292:
+        model_folder = "/ssd-pool/body-composition-stjude/ml/nnUNet_results/Dataset592_TSegTCIA/nnUNetTrainer_250epochs_NoMirroring__pretrained_plans__3d_fullres"
+        print("Using Vertebral Model from:", model_folder)
+
     predictor.initialize_from_trained_model_folder(
         model_folder,
         use_folds=folds,
@@ -508,7 +512,7 @@ def nnUNet_predict_image(file_in: Union[str, Path, Nifti1Image], file_out, task_
             # overall speedup for  3mm model roughly  0% (GPU) and  10% (CPU)
             # (dice 0.001 worse on test set -> ok)
             # (for lung_trachea_bronchia somehow a lot lower dice)
-            step_size = 0.8
+            step_size = 0.2
         else:
             step_size = 0.5
 
