@@ -275,8 +275,29 @@ def nnUNetv2_predict(dir_in, dir_out, task_id, model="3d_fullres", folds=None,
             allow_tqdm=allow_tqdm
         )
     if task_id == 292:
-        model_folder = "/ssd-pool/body-composition-stjude/ml/nnUNet_results/Dataset592_TSegTCIA/nnUNetTrainer_250epochs_NoMirroring__pretrained_plans__3d_fullres"
-        print("Using Vertebral Model from:", model_folder)
+        def getenv_bool(name: str, default: bool = False) -> bool:
+            val = os.getenv(name)
+            if val is None:
+                return default
+            return val.strip().lower() in {"1", "true", "yes", "on"}
+        use_default_model = getenv_bool("USE_DEFAULT_TSEG_VERTEBRAL_MODEL", True)
+        # print(os.getenv("USE_DEFAULT_TSEG_VERTEBRAL_MODEL"))
+        print(f"use_default_model: {use_default_model}", type(use_default_model))
+        if use_default_model==False:
+            model_folder = os.getenv("TSEG_VERTEBRAL_MODEL_PATH", None)
+            if not model_folder:
+                raise ValueError(
+                    "The environment variable 'TSEG_VERTEBRAL_MODEL_PATH' is not set. "
+                    "Please set 'TSEG_VERTEBRAL_MODEL_PATH' to the directory containing the vertebral model weights "
+                    "before running this script. Example (Linux/Mac):\n"
+                    "    export TSEG_VERTEBRAL_MODEL_PATH=/path/to/vertebral/model\n"
+                    "If you do not have the model, please download it from the official source."
+                )
+            if not os.path.exists(model_folder):
+                raise FileNotFoundError(f"Model path specified by TSEG_VERTEBRAL_MODEL_PATH does not exist: {model_folder}")
+            print("Using Vertebral Model from:", model_folder)
+        else:
+            print("Using default vertebral model")
 
     predictor.initialize_from_trained_model_folder(
         model_folder,
