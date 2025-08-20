@@ -159,7 +159,7 @@ def totalsegmentator(input: Union[str, Path, Nifti1Image], output: Union[str, Pa
             crop = None
             if not quiet: print("Using 'fastest' option: resampling to lower resolution (6mm)")
         else:
-            task_id = [291, 292, 293, 294, 295]
+            task_id = [291, 292, 293, 294]
             resample = 1.5
             trainer = "nnUNetTrainerNoMirroring"
             crop = None
